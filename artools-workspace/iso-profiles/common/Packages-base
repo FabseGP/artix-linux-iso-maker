@@ -1,0 +1,33 @@
+# Packages common in all profiles
+base
+intel-ucode
+amd-ucode
+artix-grub-theme
+artix-branding-base
+
+acpi
+acpid-@initsys@
+btrfs-progs
+cryptsetup-@initsys@
+dhcpcd-@initsys@
+ebtables
+efibootmgr
+grub
+linux
+linux-firmware
+linux-headers
+lsb-release
+memtest86+
+mkinitcpio
+mkinitcpio-openswap
+nbd
+seatd-@initsys@
+wpa_supplicant-@initsys@
+
+# Added
+base-devel
+bash
+figlet
+git
+lolcat
+parted
