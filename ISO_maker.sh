@@ -25,6 +25,10 @@
     DELETE="true"
   fi
 
+  if [[ -z "$(pacman -Qs artools)" ]]; then
+    sudo pacman --noconfirm -S artools iso-profiles
+  fi
+
   if [[ -d "/home/$(whoami)/ISO" ]]; then
     rm -rf /home/$(whoami)/ISO
   fi
@@ -45,10 +49,10 @@
   buildiso -p base -x
 
   sudo sed -i 's/--noclear/--autologin root --noclear/' /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/dinit.d/tty1
-  sudo cp script/"$SCRIPT" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup.sh
+  sudo cp scripts/"$SCRIPT" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup.sh
   sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup.sh
   sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
-  sudo cp script/keymap.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
+  sudo cp scripts/keymap.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
   sudo sed -i "3s/^/  KEYMAP=$KEYMAP_sorted\n/" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script/keymap.sh
   if [[ "$ANSWERFILE_path" ]]; then
     sudo cp "$ANSWERFILE_path" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
