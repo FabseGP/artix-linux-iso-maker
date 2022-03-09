@@ -10,8 +10,8 @@
 # Assigning parameters
 
   if [[ "/etc/vconsole.conf" ]] && [[ -z "$KEYMAP" ]]; then
-    KEYMAP="$(</etc/vconsole.conf)" # Defaults to local keymap
-    KEYMAP_sorted=${KEYMAP#*=}
+    KEYMAP_fetch="$(</etc/vconsole.conf)" # Defaults to local keymap
+    KEYMAP=${KEYMAP#*=}
   fi
   if [[ -z "$ANSWERFILE_path" ]]; then
     SCRIPT="startup.sh"
@@ -66,7 +66,9 @@
   sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup.sh
   sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
   sudo cp scripts/keymap.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
-  sudo sed -i "3s/^/  KEYMAP=$KEYMAP_sorted\n/" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script/keymap.sh
+  if [[ "$ANSWERFILE_path" ]]; then
+    sudo sed -i "3s/^/  KEYMAP=$KEYMAP\n/" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script/keymap.sh
+  fi
   if [[ "$ANSWERFILE_path" ]]; then
     sudo cp "$ANSWERFILE_path" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
   fi
