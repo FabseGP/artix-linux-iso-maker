@@ -26,8 +26,8 @@ wpa_supplicant-@initsys@
 
 # Added
 base-devel
-bash
 figlet
 git
 lolcat
 parted
+wget
