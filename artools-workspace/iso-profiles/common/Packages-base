@@ -22,7 +22,7 @@ mkinitcpio
 mkinitcpio-openswap
 nbd
 seatd-@initsys@
-wpa_supplicant-@initsys@
+iwd-@initsys@
 
 # Added
 base-devel
@@ -30,4 +30,3 @@ figlet
 git
 lolcat
 parted
-wget
