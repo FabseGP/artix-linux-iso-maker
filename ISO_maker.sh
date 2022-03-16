@@ -3,8 +3,8 @@
 # Configurable parameters
 
   KEYMAP="" # Only relevant if /etc/vconsole.conf doesn't exist
-  #ANSWERFILE_path="/home/$(whoami)/answerfile" # e.g. /home/USERNAME/answerfile; must be named answerfile
-  WIFI_SSID_path="/home/$(whoami)/WiFimodem-0CCC-5GHz.psk" # e.g. /home/USERNAME/HOMEBOX-24GHZ.psk, where "HOMEBOX-24GHZ" is your WIFI_SSID; 
+  ANSWERFILE_path="" # e.g. /home/USERNAME/answerfile; must be named answerfile
+  WIFI_SSID_path="" # e.g. /home/USERNAME/HOMEBOX-24GHZ.psk, where "HOMEBOX-24GHZ" is your WIFI_SSID; 
                     # uses iwd to autoconnect to wifi-network: https://wiki.archlinux.org/title/Iwd#Network_configuration
                     # using wpa_supplicant to generate a passphrase is the most secure way
 
@@ -31,7 +31,7 @@
     echo "%wheel ALL=(ALL) ALL" | doas tee /etc/sudoers
     DELETE_1="true"
   fi
-  if [[ -z "$(pacman -Qs openssl)" ]]; then
+  if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path" ]]; then
     sudo pacman --noconfirm -S openssl
     DELETE_2="true"
   fi
