@@ -9,8 +9,6 @@ acpi
 acpid-@initsys@
 btrfs-progs
 cryptsetup-@initsys@
-dhcpcd-@initsys@
-ebtables
 efibootmgr
 grub
 linux
@@ -22,11 +20,11 @@ mkinitcpio
 mkinitcpio-openswap
 nbd
 seatd-@initsys@
-iwd-@initsys@
 
 # Added
-base-devel
 figlet
 git
+iwd-@initsys@
 lolcat
 parted
+wget
