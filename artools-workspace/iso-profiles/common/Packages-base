@@ -10,6 +10,7 @@ acpid-@initsys@
 btrfs-progs
 cryptsetup-@initsys@
 efibootmgr
+elogind-@initsys@
 grub
 linux
 linux-firmware
@@ -19,7 +20,6 @@ memtest86+
 mkinitcpio
 mkinitcpio-openswap
 nbd
-seatd-@initsys@
 
 # Added
 figlet
