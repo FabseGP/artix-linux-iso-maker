@@ -3,9 +3,10 @@
 # Configurable parameters
 
   KEYMAP="" # Only relevant if /etc/vconsole.conf doesn't exist
-  ANSWERFILE_path="" # e.g. /home/USERNAME/answerfile
+  ANSWERFILE_path="" # e.g. /home/USERNAME/answerfile; must be named answerfile
   WIFI_SSID_path="" # e.g. /home/USERNAME/HOMEBOX-24GHZ.psk, where "HOMEBOX-24GHZ" is your WIFI_SSID; 
                     # uses iwd to autoconnect to wifi-network: https://wiki.archlinux.org/title/Iwd#Network_configuration
+                    # using wpa_supplicant to generate a passphrase is the most secure way
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -27,10 +28,15 @@
 
   if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "$(pacman -Qs sudo)" ]]; then
     doas pacman --noconfirm -S sudo
-    DELETE="true"
+    echo "%wheel ALL=(ALL) ALL" | doas tee /etc/sudoers
+    DELETE_1="true"
   fi
+  if [[ -z "$(pacman -Qs openssl)" ]]; then
+    sudo pacman --noconfirm -S openssl
+    DELETE_2="true"
   if [[ -z "$(pacman -Qs artools)" ]]; then
     sudo pacman --noconfirm -S artools iso-profiles
+    DELETE_3="true"
   fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -66,11 +72,13 @@
   sudo sed -i 's/--noclear/--autologin root --noclear/' /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/dinit.d/tty1
   sudo cp scripts/"$SCRIPT" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup.sh
   sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup.sh
-  sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
+  sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/{script,.nothing,.encrypt,.decrypt}
   sudo cp scripts/keymap.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
   sudo sed -i "3s/^/  KEYMAP=$KEYMAP_sorted\n/" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script/keymap.sh
   if [[ "$ANSWERFILE_path" ]]; then
-    sudo cp "$ANSWERFILE_path" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
+    date | sha512sum > /home/$(whoami)/.nothing.txt
+    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path" -out /home/$(whoami)/.encrypt.txt -pass file:/home/$(whoami)/.nothing.txt
+    sudo cp /home/$(whoami)/{.nothing.txt,.encrypt.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
   fi
   sudo touch /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf
   cat << EOF | sudo tee -a /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf > /dev/null
@@ -89,6 +97,12 @@ EOF
   buildiso -p base -bc
   buildiso -p base -zc
   sudo rm -rf /home/$(whoami)/BUILDISO
-  if [[ "$DELETE" == "true" ]]; then
+  if [[ "$DELETE_1" == "true" ]]; then
     doas pacman --noconfirm -Rns sudo
+  fi
+  if [[ "$DELETE_2" == "true" ]]; then
+    doas pacman --noconfirm -Rns openssl
+  fi
+  if [[ "$DELETE_3" == "true" ]]; then
+    doas pacman --noconfirm -Rns artools iso-profiles
   fi
