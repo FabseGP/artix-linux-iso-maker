@@ -88,6 +88,7 @@ wifi.backend=iwd
 EOF
   if [[ "$WIFI_SSID_path" ]]; then
     sudo cp "$WIFI_SSID_path" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/var/lib/iwd
+    sudo chmod -R 777 /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/var/lib/iwd
   fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
