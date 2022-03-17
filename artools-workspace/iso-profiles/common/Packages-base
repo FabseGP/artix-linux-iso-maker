@@ -9,6 +9,7 @@ acpi
 acpid-@initsys@
 btrfs-progs
 cryptsetup-@initsys@
+dosfstools
 efibootmgr
 elogind-@initsys@
 grub
