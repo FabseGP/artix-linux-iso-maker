@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
   cd /script || exit
+  chmod u+x keymap.sh
   ./keymap.sh
   cd || exit
   until ping -c 1 xkcd.com &> /dev/null; do
