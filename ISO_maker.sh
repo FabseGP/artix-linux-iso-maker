@@ -4,9 +4,10 @@
 
   KEYMAP="" # Only relevant if /etc/vconsole.conf doesn't exist
   ANSWERFILE_path="" # e.g. /home/USERNAME/answerfile; must be named answerfile
-  WIFI_SSID_path="" # e.g. /home/USERNAME/HOMEBOX-24GHZ.psk, where "HOMEBOX-24GHZ" is your WIFI_SSID; 
-                    # uses iwd to autoconnect to wifi-network: https://wiki.archlinux.org/title/Iwd#Network_configuration
-                    # using wpa_supplicant to generate a passphrase is the most secure way
+  WIFI_ssid="" # e.g. HOMEBOX-24GHZ 
+  WIFI_passwd="" # Won't be stored on the ISO; instead a passphrase will be generated using wpa_supplicant,
+                 # which is unique to your wifi-ssid and wifi-password
+                 # NOTICE: not filling these variables means that nmtui is executed at boot
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -38,6 +39,10 @@
   if [[ -z "$(pacman -Qs artools)" ]]; then
     sudo pacman --noconfirm -S artools iso-profiles
     DELETE_3="true"
+  fi
+  if [[ -z "$(pacman -Qs wpa_supplicant)" ]] && [[ "$WIFI_ssid" && "$WIFI_passwd" ]]; then
+    sudo pacman --noconfirm -S wpa_supplicant
+    DELETE_4="true"
   fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -86,10 +91,26 @@
 [device]
 wifi.backend=iwd
 EOF
-  if [[ "$WIFI_SSID_path" ]]; then
-    sudo cp "$WIFI_SSID_path" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/var/lib/iwd
+  if [[ "$WIFI_ssid" && "$WIFI_passwd" ]]; then
+    touch $WIFI_ssid.psk
+    wpa_passphrase $WIFI_ssid $WIFI_passwd > network.txt
+    WIFI_passphrase=$(sed '4q;d' network.txt)
+    WIFI_passphrase_cut=${WIFI_passphrase:5}
+    WIFI_passphrase_cut_clean=${WIFI_passphrase_cut//[[:blank:]]/}
+   cat << EOF | tee -a $WIFI_ssid.psk > /dev/null    
+[Security]
+Passphrase=$WIFI_passphrase_cut_clean
+
+EOF
+    sudo mv $WIFI_ssid.psk /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/var/lib/iwd
     sudo chmod -R 777 /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/var/lib/iwd
+    rm -rf network.txt
   fi
+  sudo cp configs/pacman.conf /home/fabse/BUILDISO/buildiso/base/artix/rootfs/
+  sudo cp repositories.sh /home/fabse/BUILDISO/buildiso/base/artix/rootfs/
+  sudo chmod u+x /home/fabse/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
+  artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/ /bin/bash -c "bash /repositories.sh"
+  sudo rm -rf /home/fabse/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -99,12 +120,15 @@ EOF
   buildiso -p base -bc
   buildiso -p base -zc
   sudo rm -rf /home/$(whoami)/BUILDISO
-  if [[ "$DELETE_1" == "true" ]]; then
-    doas pacman --noconfirm -Rns sudo
-  fi
   if [[ "$DELETE_2" == "true" ]]; then
-    doas pacman --noconfirm -Rns openssl
+    sudo pacman --noconfirm -Rns openssl
   fi
   if [[ "$DELETE_3" == "true" ]]; then
-    doas pacman --noconfirm -Rns artools iso-profiles
+    sudo pacman --noconfirm -Rns artools iso-profiles
+  fi
+  if [[ "$DELETE_3" == "true" ]]; then
+    sudo pacman --noconfirm -Rns wpa_supplicant
+  fi
+  if [[ "$DELETE_1" == "true" ]]; then
+    doas pacman --noconfirm -Rns sudo
   fi
