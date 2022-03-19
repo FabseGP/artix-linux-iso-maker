@@ -107,7 +107,7 @@ EOF
     rm -rf network.txt
   fi
   sudo cp configs/pacman.conf /home/fabse/BUILDISO/buildiso/base/artix/rootfs/
-  sudo cp repositories.sh /home/fabse/BUILDISO/buildiso/base/artix/rootfs/
+  sudo cp scripts/repositories.sh /home/fabse/BUILDISO/buildiso/base/artix/rootfs/
   sudo chmod u+x /home/fabse/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
   artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/ /bin/bash -c "bash /repositories.sh"
   sudo rm -rf /home/fabse/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
