@@ -114,12 +114,12 @@ EOF
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
-# Continues building the ISO with deletion of build-folder
+# Continues building the ISO with auto-cleanup
 
   buildiso -p base -sc
   buildiso -p base -bc
   buildiso -p base -zc
-  sudo rm -rf /home/$(whoami)/BUILDISO
+  sudo rm -rf /home/$(whoami)/{BUILDISO,artools-workspace,.config/artools}
   if [[ "$DELETE_2" == "true" ]]; then
     sudo pacman --noconfirm -Rns openssl
   fi
@@ -132,3 +132,9 @@ EOF
   if [[ "$DELETE_1" == "true" ]]; then
     doas pacman --noconfirm -Rns sudo
   fi
+  echo
+  echo "----------------------------------------------------------------"
+  echo "------YOUR CUSTOM ISO CAN BE FOUND AT /home/$(whoami)/ISO/base------"
+  echo "----------------------------------------------------------------"
+  echo 
+
