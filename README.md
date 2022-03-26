@@ -2,7 +2,7 @@
 
 A customizable script for building an ISO that automatically executes an install-script at boot - the script is fetched from one of my other projects, but can point to any other git-repo.
 
-By default the init is dinit, albeit that's only due to it's fast initialization, while only basics and neccessary toolkits - such as NetworkManager for easy setting up a network-connection - is installed onto the ISO; any other packages can be added to one of the packages-lists.
+By default the init is dinit, albeit that's only due to it's fast initialization, while only basics and neccessary toolkits - such as NetworkManager for easy setting up a network-connection - is installed onto the ISO; any other packages can be added to artools-workspace/iso-profiles/common/Packages-base.
 
 ## Installation
 
