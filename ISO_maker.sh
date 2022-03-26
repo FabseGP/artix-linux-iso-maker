@@ -83,11 +83,11 @@
   sudo cp scripts/keymap.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
   sudo sed -i "3s/^/  KEYMAP=$KEYMAP_sorted\n/" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script/keymap.sh
   if [[ "$ANSWERFILE_path" ]]; then
-    mkdir .nothing
+    mkdir /home/$(whoami)/.nothing
     date | sha512sum > /home/$(whoami)/.nothing/nothing.txt
     openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path" -out /home/$(whoami)/.nothing/encrypt.txt -pass file:/home/$(whoami)/.nothing/nothing.txt
     sudo cp /home/$(whoami)/.nothing/{nothing.txt,encrypt.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
-    rm -rf .nothing
+    rm -rf /home/$(whoami)/.nothing
   fi
   sudo touch /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf
   cat << EOF | sudo tee -a /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf > /dev/null
