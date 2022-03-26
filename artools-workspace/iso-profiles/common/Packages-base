@@ -13,7 +13,7 @@ dosfstools
 efibootmgr
 elogind-@initsys@
 grub
-iftables-nft
+iptables-nft
 linux
 linux-firmware
 linux-headers
