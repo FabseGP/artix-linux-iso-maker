@@ -3,9 +3,9 @@
 # Configurable parameters
 
   KEYMAP="" # Only relevant if /etc/vconsole.conf doesn't exist
-  ANSWERFILE_path="/home/fabse/answerfile" # e.g. /home/USERNAME/answerfile; must be named answerfile
-  WIFI_ssid="WiFimodem-0CCC-5GHz" # e.g. HOMEBOX-24GHZ 
-  WIFI_passwd="jtmkrmyyaz" # Won't be stored on the ISO; instead a passphrase will be generated using wpa_supplicant,
+  ANSWERFILE_path="" # e.g. /home/USERNAME/answerfile; must be named answerfile
+  WIFI_ssid="" # e.g. HOMEBOX-24GHZ 
+  WIFI_passwd="" # Won't be stored on the ISO; instead a passphrase will be generated using wpa_supplicant,
                  # which is unique to your wifi-ssid and wifi-password
                  # NOTICE: not filling these variables means that nmtui is executed at boot
 
