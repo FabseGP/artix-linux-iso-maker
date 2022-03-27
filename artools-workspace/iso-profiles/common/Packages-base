@@ -3,7 +3,6 @@ base
 intel-ucode
 amd-ucode
 artix-grub-theme
-artix-branding-base
 
 acpi
 acpid-@initsys@
