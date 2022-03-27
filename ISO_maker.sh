@@ -87,11 +87,11 @@
 [device]
 wifi.backend=iwd
 EOF
-  sudo cp configs/pacman.conf /home/fabse/BUILDISO/buildiso/base/artix/rootfs/
-  sudo cp scripts/repositories.sh /home/fabse/BUILDISO/buildiso/base/artix/rootfs/
-  sudo chmod u+x /home/fabse/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
+  sudo cp configs/pacman.conf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/
+  sudo cp scripts/repositories.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/
+  sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
   artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/ /bin/bash -c "bash /repositories.sh"
-  sudo rm -rf /home/fabse/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
+  sudo rm -rf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
