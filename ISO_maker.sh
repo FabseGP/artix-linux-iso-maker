@@ -67,6 +67,7 @@
 
 # Builds the filesystem and applies modifications
 
+  sudo modprobe loop
   buildiso -p base -x
   sudo sed -i 's/--noclear/--autologin root --noclear/' /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/dinit.d/tty1
   sudo cp scripts/"$SCRIPT" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup.sh
