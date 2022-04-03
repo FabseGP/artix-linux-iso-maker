@@ -24,6 +24,10 @@
 # Checking and installing any missing dependencies
 
   if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "$(pacman -Qs sudo)" ]]; then
+    if [[ -f "/usr/bin/sudo" ]]; then
+      doas rm -rf /usr/bin/sudo
+      RESTORE_1="true"
+    fi
     doas pacman --noconfirm -S sudo
     echo "%wheel ALL=(ALL) ALL" | doas tee /etc/sudoers
     DELETE_1="true"
@@ -109,6 +113,9 @@ EOF
   fi
   if [[ "$DELETE_1" == "true" ]]; then
     doas pacman --noconfirm -Rns sudo
+  fi
+  if [[ "$RESTORE_1" == "true" ]]; then
+    doas ln -s $(which doas) /usr/bin/sudo
   fi
   echo
   echo "----------------------------------------------------------------"
