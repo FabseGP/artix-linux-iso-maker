@@ -1,0 +1,105 @@
+# Answer file for install-script
+# All options can either be set as "true" or "false", unless specific values is specified
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# type of installation
+
+  INTERACTIVE_INSTALL="true" # "true" ignores answerfile and shows prompts during install
+                             # "false" sources answerfile and shows *almost* no prompts during install
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# filesystem + encryption
+
+  DRIVE_path="" # Absolute path; e.g. "/dev/nvme0n1" or "/dev/sda"
+                # Or "ASK" if wanted to be prompted before install
+  FILESYSTEM_primary_btrfs="true" 
+  FILESYSTEM_primary_bcachefs="" # NOT YET IN KERNEL; LEAVE EMPTY
+  ENCRYPTION_partitions="" # "true" or "false"
+
+# ------ ONLY MODIFY BELOW IF ENCRYPTION_partitions IS "true" ------ 
+
+  ENCRYPTION_passwd="NOT SPECIFIED"
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# boot-partition
+
+  BOOT_size="300" # In megabytes; minimum 300 MB is required
+  BOOT_label="NOT SPECIFIED" # Maximum 11 characters with FAT32
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# swap-partition
+
+  SWAP_partition="" # "true" or "false"
+
+# ------ ONLY MODIFY BELOW IF SWAP_partition IS "true" ------ 
+
+  SWAP_size_allocated="8300" # If SWAP_size is 8000 MB and BOOT_size is 300 MB
+  SWAP_label="NOT SPECIFIED" 
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# primary-partition
+
+  PRIMARY_label="NOT SPECIFIED"
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# init-system
+
+  INIT_choice="" # "dinit", "openrc" or "runit"
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# replace packages
+
+# ------ TRUE FOR ALL MENTIONED PACKAGES BELOW: ------ 
+ 
+  # These replacements doesn't conflict with their counterparts, which means
+  # that any packages that depends on one of the below mentioned counterparts
+  # will install that counterpart. pacman -Rdd COUNTERPART can be used,
+  # but may results in some programs failing
+
+  REPLACE_networkmanager="" # Replaces it with connman; "true" or "false"
+  REPLACE_sudo="" # Replaces it with doas; "true" or "false"
+  REPLACE_elogind="" # Replaces it with seatd; "true" or "false
+                     # NOTICE: an elogind-dummy-package is installed, though NetworkManager requires elogind
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# locals
+
+  TIMEZONE="NOT SPECIFIED" # e.g. "Europe/Copenhagen
+  LANGUAGES_generate="NOT SPECIFIED" # Must be space-separated; e.g. "da_DK.UTF-8 en_GB.UTF-8"
+  LANGUAGE_system="NOT SPECIFIED"
+  KEYMAP_system="NOT SPECIFIED"
+  HOSTNAME_system="NOT SPECIFIED"
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# users
+
+  ROOT_passwd="NOT SPECIFIED" 
+  USERNAME="NOT SPECIFIED"
+  USER_passwd="NOT SPECIFIED"
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# miscellaneous
+
+  BOOTLOADER_label="NOT SPECIFIED"
+  PACKAGES_additional="NONE" # Must be space-separated; e.g. "firefox kicad"
+                             # Keep "NONE" as value, if no other packages should be installed
+  POST_script="" # "true": fetches and execute specified script as regular user from an git-repository
+                 # "false": does nothing
+
+# ------ ONLY MODIFY BELOW IF POST_script IS "true" ------ 
+
+  POST_install_script="" # e.g. "gitlab.com/FabseGP02/artix-install-script.git"
+  POST_install_script_name="" # Path to script to be executed within the cloned repository
+                              # e.g. "config/install_artix.sh" if within artix-install-script/config
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
