@@ -18,12 +18,13 @@
   else
     SCRIPT="startup_with_answerfile.sh"
   fi
+  check_sudo="$(pacman -Qs --color always "sudo" | grep "local" | grep "sudo ")"
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
 # Checking and installing any missing dependencies
 
-  if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "$(pacman -Qs sudo)" ]]; then
+  if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "${check_sudo}" ]]; then
     if [[ -f "/usr/bin/sudo" ]]; then
       doas rm -rf /usr/bin/sudo
       RESTORE_1="true"
