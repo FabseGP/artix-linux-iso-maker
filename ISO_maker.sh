@@ -63,6 +63,8 @@
 
 # Copies configs and creates folders
 
+  sudo cp -rf configs/pacman.conf /etc/pacman.conf
+  sudo pacman -Syy
   cp -rf artools /home/$(whoami)/.config
   cp -rf artools-workspace /home/$(whoami)
   mkdir /home/$(whoami)/{BUILDISO,ISO}
