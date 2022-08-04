@@ -7,19 +7,19 @@ select option in "${modes[@]}"; do
     case $option in
         "INTERACTIVE INSTALL")
             ./startup.sh
-            exit
+            break
             ;;
         "BASE INSTALL")
             ./startup_with_answerfile.sh BASE
-            exit
+            break
             ;;
         "MINIMAL INSTALL")
             ./startup_with_answerfile.sh MINIMAL
-            exit
+            break
             ;;
 	    "FULL INSTALL")
             ./startup_with_answerfile.sh FULL
-            exit
+            break
 	        ;;
 	     "EXIT TO LIVE ISO")
 	        echo "User requested exit"
