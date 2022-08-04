@@ -7,6 +7,16 @@
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
+# Updating pacman-config + backup of existing
+
+  sudo cp /etc/pacman.conf /etc/pacman-backup.conf
+  sudo cp -rf configs/pacman1.conf /etc/pacman.conf
+  sudo pacman -Syy
+  sudo pacman -S artix-archlinux-support
+  sudo cp -rf configs/pacman2.conf /etc/pacman.conf
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
 # Assigning parameters
 
   if [[ "/etc/vconsole.conf" ]] && [[ -z "$KEYMAP" ]]; then
@@ -19,16 +29,6 @@
     SCRIPT="startup_with_answerfile.sh"
   fi
   check_sudo="$(pacman -Qs --color always "sudo" | grep "local" | grep "sudo ")"
-
-#----------------------------------------------------------------------------------------------------------------------------------
-
-# Updating pacman-config + backup of existing
-
-  sudo cp /etc/pacman.conf /etc/pacman-backup.conf
-  sudo cp -rf configs/pacman1.conf /etc/pacman.conf
-  sudo pacman -Syy
-  sudo pacman -S artix-archlinux-support
-  sudo cp -rf configs/pacman2.conf /etc/pacman.conf
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
