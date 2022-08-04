@@ -22,6 +22,16 @@
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
+# Updating pacman-config + backup of existing
+
+  sudo cp /etc/pacman.conf /etc/pacman-backup.conf
+  sudo cp -rf configs/pacman1.conf /etc/pacman.conf
+  sudo pacman -Syy
+  sudo pacman -S artix-archlinux-support
+  sudo cp -rf configs/pacman2.conf /etc/pacman.conf
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
 # Checking and installing any missing dependencies
 
   if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "${check_sudo}" ]]; then
@@ -63,7 +73,6 @@
 
 # Copies configs and creates folders
 
-  sudo cp -rf configs/pacman.conf /etc/pacman.conf
   sudo pacman -Syy
   cp -rf artools /home/$(whoami)/.config
   cp -rf artools-workspace /home/$(whoami)
@@ -120,6 +129,8 @@ EOF
   if [[ "$RESTORE_1" == "true" ]]; then
     doas ln -s $(which doas) /usr/bin/sudo
   fi
+  sudo mv /etc/pacman-backup.conf /etc/pacman.conf
+  sudo pacman -Syy
   echo
   echo "----------------------------------------------------------------"
   echo "------YOUR CUSTOM ISO CAN BE FOUND AT /home/$(whoami)/ISO/base------"
