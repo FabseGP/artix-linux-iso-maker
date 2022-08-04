@@ -101,14 +101,14 @@
   fi
   if [[ "$ANSWERFILE_path_minimal" ]]; then
     mkdir /home/$(whoami)/.nothing2
-    date | sha512sum > /home/$(whoami)/.nothing1/nothing2.txt
+    date | sha512sum > /home/$(whoami)/.nothing2/nothing2.txt
     openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_minimal" -out /home/$(whoami)/.nothing2/encrypt2.txt -pass file:/home/$(whoami)/.nothing2/nothing2.txt
     sudo cp /home/$(whoami)/.nothing2/{nothing2.txt,encrypt2.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
     rm -rf /home/$(whoami)/.nothing2
   fi
   if [[ "$ANSWERFILE_path_full" ]]; then
     mkdir /home/$(whoami)/.nothing3
-    date | sha512sum > /home/$(whoami)/.nothing2/nothing3.txt
+    date | sha512sum > /home/$(whoami)/.nothing3/nothing3.txt
     openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_full" -out /home/$(whoami)/.nothing3/encrypt3.txt -pass file:/home/$(whoami)/.nothing3/nothing3.txt
     sudo cp /home/$(whoami)/.nothing3/{nothing3.txt,encrypt3.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
     rm -rf /home/$(whoami)/.nothing3
