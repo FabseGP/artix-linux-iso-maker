@@ -23,7 +23,7 @@ select option in "${modes[@]}"; do
 	        ;;
 	     "EXIT TO LIVE ISO")
 	        echo "User requested exit"
-	        exit
+	        break
 	        ;;
          *) echo "Invalid option \"$REPLY\"; I don't have time for this!";;
     esac
