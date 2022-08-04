@@ -10,10 +10,14 @@
 # Updating pacman-config + backup of existing
 
   sudo cp /etc/pacman.conf /etc/pacman-backup.conf
-  sudo cp -rf configs/pacman1.conf /etc/pacman.conf
-  sudo pacman -Syy
-  sudo pacman -S artix-archlinux-support
+  if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then
+    sudo cp -rf configs/pacman1.conf /etc/pacman.conf
+    sudo pacman -Syy
+    sudo pacman -S --noconfirm artix-archlinux-support
+    sudo pacman-key --populate archlinux
+  fi
   sudo cp -rf configs/pacman2.conf /etc/pacman.conf
+  sudo pacman -Syy
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
