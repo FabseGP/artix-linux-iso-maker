@@ -87,7 +87,7 @@
   buildiso -p base -x
   sudo sed -i 's/--noclear/--autologin root --noclear/' /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/dinit.d/tty1
   sudo cp scripts/startup_choice.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup_choice.sh
-  sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup.sh
+  sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup_choice.sh
   sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/{scripts,.nothing,.encrypt,.decrypt}
   sudo cp scripts/{startup.sh,startup_with_answerfile.sh,keymap.sh} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
   sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts/*
