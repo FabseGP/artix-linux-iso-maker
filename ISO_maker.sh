@@ -3,7 +3,9 @@
 # Configurable parameters
 
   KEYMAP="" # Only relevant if /etc/vconsole.conf doesn't exist
-  ANSWERFILE_path="" # e.g. /home/USERNAME/answerfile; must be named answerfile
+  ANSWERFILE_path_base="" # e.g. /home/USERNAME/answerfile_base; must be named answerfile
+  ANSWERFILE_path_minimal="" # e.g. /home/USERNAME/answerfile_minimal; must be named answerfile
+  ANSWERFILE_path_full="" # e.g. /home/USERNAME/answerfile_full; must be named answerfile
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -27,11 +29,6 @@
     KEYMAP="$(</etc/vconsole.conf)" # Defaults to local keymap
     KEYMAP_sorted=${KEYMAP#*=}
   fi
-  if [[ -z "$ANSWERFILE_path" ]]; then
-    SCRIPT="startup.sh"
-  else
-    SCRIPT="startup_with_answerfile.sh"
-  fi
   check_sudo="$(pacman -Qs --color always "sudo" | grep "local" | grep "sudo ")"
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -47,7 +44,7 @@
     echo "%wheel ALL=(ALL) ALL" | doas tee /etc/sudoers
     DELETE_1="true"
   fi
-  if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path" ]]; then
+  if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" ]]; then
     sudo pacman --noconfirm -S openssl
     DELETE_2="true"
   fi
@@ -89,17 +86,32 @@
   sudo modprobe loop
   buildiso -p base -x
   sudo sed -i 's/--noclear/--autologin root --noclear/' /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/dinit.d/tty1
-  sudo cp scripts/"$SCRIPT" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup.sh
+  sudo cp scripts/startup_choice.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup_choice.sh
   sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup.sh
-  sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/{script,.nothing,.encrypt,.decrypt}
-  sudo cp scripts/keymap.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
-  sudo sed -i "3s/^/  KEYMAP=$KEYMAP_sorted\n/" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script/keymap.sh
-  if [[ "$ANSWERFILE_path" ]]; then
-    mkdir /home/$(whoami)/.nothing
-    date | sha512sum > /home/$(whoami)/.nothing/nothing.txt
-    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path" -out /home/$(whoami)/.nothing/encrypt.txt -pass file:/home/$(whoami)/.nothing/nothing.txt
-    sudo cp /home/$(whoami)/.nothing/{nothing.txt,encrypt.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/script
-    rm -rf /home/$(whoami)/.nothing
+  sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/{scripts,.nothing,.encrypt,.decrypt}
+  sudo cp scripts/{startup.sh,startup_with_answerfile.sh,keymap.sh} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
+  sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts/*
+  sudo sed -i "3s/^/  KEYMAP=$KEYMAP_sorted\n/" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts/keymap.sh
+  if [[ "$ANSWERFILE_path_base" ]]; then
+    mkdir /home/$(whoami)/.nothing1
+    date | sha512sum > /home/$(whoami)/.nothing1/nothing1.txt
+    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_base" -out /home/$(whoami)/.nothing1/encrypt1.txt -pass file:/home/$(whoami)/.nothing1/nothing1.txt
+    sudo cp /home/$(whoami)/.nothing1/{nothing1.txt,encrypt1.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
+    rm -rf /home/$(whoami)/.nothing1
+  fi
+  if [[ "$ANSWERFILE_path_minimal" ]]; then
+    mkdir /home/$(whoami)/.nothing2
+    date | sha512sum > /home/$(whoami)/.nothing1/nothing2.txt
+    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_minimal" -out /home/$(whoami)/.nothing2/encrypt2.txt -pass file:/home/$(whoami)/.nothing2/nothing2.txt
+    sudo cp /home/$(whoami)/.nothing2/{nothing2.txt,encrypt2.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
+    rm -rf /home/$(whoami)/.nothing2
+  fi
+  if [[ "$ANSWERFILE_path_full" ]]; then
+    mkdir /home/$(whoami)/.nothing3
+    date | sha512sum > /home/$(whoami)/.nothing2/nothing3.txt
+    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_full" -out /home/$(whoami)/.nothing3/encrypt3.txt -pass file:/home/$(whoami)/.nothing3/nothing3.txt
+    sudo cp /home/$(whoami)/.nothing3/{nothing3.txt,encrypt3.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
+    rm -rf /home/$(whoami)/.nothing3
   fi
   sudo touch /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf
   cat << EOF | sudo tee -a /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf > /dev/null
