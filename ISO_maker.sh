@@ -11,7 +11,7 @@
 
 # Updating pacman-config + backup of existing
 
-  if [["$(pacman -Qs opendoas)"]]; then
+  if [[ "$(pacman -Qs opendoas)" ]]; then
     su_command="doas"
   else
     su_command="sudo"
