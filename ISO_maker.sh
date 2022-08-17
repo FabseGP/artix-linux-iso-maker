@@ -11,15 +11,20 @@
 
 # Updating pacman-config + backup of existing
 
-  sudo cp /etc/pacman.conf /etc/pacman-backup.conf
-  if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then
-    sudo cp -rf configs/pacman1.conf /etc/pacman.conf
-    sudo pacman -Syy
-    sudo pacman -S --noconfirm artix-archlinux-support
-    sudo pacman-key --populate archlinux
+  if [["$(pacman -Qs opendoas)"]]; then
+    su_command="doas"
+  else
+    su_command="sudo"
   fi
-  sudo cp -rf configs/pacman2.conf /etc/pacman.conf
-  sudo pacman -Syy
+  "$su_command" cp /etc/pacman.conf /etc/pacman-backup.conf
+  if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then
+    "$su_command" cp -rf configs/pacman1.conf /etc/pacman.conf
+    "$su_command" pacman -Syy
+    "$su_command" pacman -S --noconfirm artix-archlinux-support
+    "$su_command" pacman-key --populate archlinux
+  fi
+  "$su_command" cp -rf configs/pacman2.conf /etc/pacman.conf
+  "$su_command" pacman -Syy
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
