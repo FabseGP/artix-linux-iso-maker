@@ -1,164 +1,104 @@
-#!/usr/bin/bash
+# Answer file for install-script
+    # All options can either be set as "true" or "false", unless specific values is specified
 
-# Configurable parameters
+    #----------------------------------------------------------------------------------------------------------------------------------
 
-  KEYMAP="" # Only relevant if /etc/vconsole.conf doesn't exist
-  ANSWERFILE_path_base="" # e.g. /home/USERNAME/answerfile_base; must be named answerfile_base
-  ANSWERFILE_path_minimal="" # e.g. /home/USERNAME/answerfile_minimal; must be named answerfile_minimal
-  ANSWERFILE_path_full="" # e.g. /home/USERNAME/answerfile_full; must be named answerfile_full
+    # type of installation
 
-#----------------------------------------------------------------------------------------------------------------------------------
+      INTERACTIVE_INSTALL="true" # "true" ignores answerfile and shows prompts during install
+                                 # "false" sources answerfile and shows *almost* no prompts during install
 
-# Updating pacman-config + backup of existing
+    #----------------------------------------------------------------------------------------------------------------------------------
 
-  if [[ "$(pacman -Qs opendoas)" ]]; then
-    su_command="doas"
-  else
-    su_command="sudo"
-  fi
-  "$su_command" cp /etc/pacman.conf /etc/pacman-backup.conf
-  if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then
-    "$su_command" cp -rf configs/pacman1.conf /etc/pacman.conf
-    "$su_command" pacman -Syy
-    "$su_command" pacman -S --noconfirm artix-archlinux-support
-    "$su_command" pacman-key --populate archlinux
-  fi
-  "$su_command" cp -rf configs/pacman2.conf /etc/pacman.conf
-  "$su_command" pacman -Syy
+    # filesystem + encryption
 
-#----------------------------------------------------------------------------------------------------------------------------------
+      DRIVE_path="" # Absolute path; e.g. "/dev/nvme0n1" or "/dev/sda"
+                    # Or "ASK" if wanted to be prompted before install
+      FILESYSTEM_primary_btrfs="true" 
+      FILESYSTEM_primary_bcachefs="" # NOT YET IN KERNEL; LEAVE EMPTY
+      ENCRYPTION_partitions="" # "true" or "false"
 
-# Assigning parameters
+    # ------ ONLY MODIFY BELOW IF ENCRYPTION_partitions IS "true" ------ 
 
-  if [[ "/etc/vconsole.conf" ]] && [[ -z "$KEYMAP" ]]; then
-    KEYMAP="$(</etc/vconsole.conf)" # Defaults to local keymap
-    KEYMAP_sorted=${KEYMAP#*=}
-  fi
-  check_sudo="$(pacman -Qs --color always "sudo" | grep "local" | grep "sudo ")"
+      ENCRYPTION_passwd="NOT SPECIFIED"
 
-#----------------------------------------------------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------------------------------------------------------------------
 
-# Checking and installing any missing dependencies
+    # boot-partition
 
-  if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "${check_sudo}" ]]; then
-    if [[ -f "/usr/bin/sudo" ]]; then
-      doas rm -rf /usr/bin/sudo
-      RESTORE_1="true"
-    fi
-    doas pacman --noconfirm -S sudo
-    echo "%wheel ALL=(ALL) ALL" | doas tee /etc/sudoers
-    DELETE_1="true"
-  fi
-  if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" ]]; then
-    sudo pacman --noconfirm -S openssl
-    DELETE_2="true"
-  fi
-  if [[ -z "$(pacman -Qs artools)" ]]; then
-    sudo pacman --noconfirm -S artools iso-profiles
-    DELETE_3="true"
-  fi
+      BOOT_size="300" # In megabytes; minimum 300 MB is required
+      BOOT_label="NOT SPECIFIED" # Maximum 11 characters with FAT32
 
-#----------------------------------------------------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------------------------------------------------------------------
 
-# Cleaning conflicting folders
+    # swap-partition
 
-  if [[ -d "/home/$(whoami)/ISO" ]]; then
-    rm -rf /home/$(whoami)/ISO
-  fi
-  if [[ -d "/home/$(whoami)/BUILDISO" ]]; then
-    if [[ -d "/home/$(whoami)/BUILDISO/buildiso/base/artix/bootfs" ]]; then
-      sudo umount -l /home/$(whoami)/BUILDISO/buildiso/base/artix/bootfs
-    fi
-    if [[ -d "/home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs" ]]; then
-      sudo umount -l /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs
-    fi
-    sudo rm -rf /home/$(whoami)/BUILDISO
-  fi
+      SWAP_partition="" # "true" or "false"
 
-#----------------------------------------------------------------------------------------------------------------------------------
+    # ------ ONLY MODIFY BELOW IF SWAP_partition IS "true" ------ 
 
-# Copies configs and creates folders
+      SWAP_size_allocated="8300" # If SWAP_size should be 8000 MB and BOOT_size is 300 MB
+      SWAP_label="NOT SPECIFIED" 
 
-  cp -rf artools /home/$(whoami)/.config
-  cp -rf artools-workspace /home/$(whoami)
-  mkdir /home/$(whoami)/{BUILDISO,ISO}
-  sudo sed -i 's/\/usr\/src\/linux\/version/\/usr\/src\/linux-zen\/version/' /usr/bin/buildiso
+    #----------------------------------------------------------------------------------------------------------------------------------
 
-#----------------------------------------------------------------------------------------------------------------------------------
+    # primary-partition
 
-# Builds the filesystem and applies modifications
+      PRIMARY_label="NOT SPECIFIED"
 
-  sudo modprobe loop
-  buildiso -p base -x
-  sudo sed -i 's/--noclear/--autologin root --noclear/' /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/dinit.d/tty1
-  sudo cp scripts/startup_choice.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup_choice.sh
-  sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup_choice.sh
-  sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/{scripts,.nothing,.encrypt,.decrypt}
-  sudo cp scripts/{startup.sh,startup_with_answerfile.sh,keymap.sh} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
-  sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts/*
-  sudo sed -i "3s/^/  KEYMAP=$KEYMAP_sorted\n/" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts/keymap.sh
-  if [[ "$ANSWERFILE_path_base" ]]; then
-    mkdir /home/$(whoami)/.nothing1
-    date | sha512sum > /home/$(whoami)/.nothing1/nothing1.txt
-    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_base" -out /home/$(whoami)/.nothing1/encrypt1.txt -pass file:/home/$(whoami)/.nothing1/nothing1.txt
-    sudo cp /home/$(whoami)/.nothing1/{nothing1.txt,encrypt1.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
-    rm -rf /home/$(whoami)/.nothing1
-  fi
-  if [[ "$ANSWERFILE_path_minimal" ]]; then
-    mkdir /home/$(whoami)/.nothing2
-    date | sha512sum > /home/$(whoami)/.nothing2/nothing2.txt
-    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_minimal" -out /home/$(whoami)/.nothing2/encrypt2.txt -pass file:/home/$(whoami)/.nothing2/nothing2.txt
-    sudo cp /home/$(whoami)/.nothing2/{nothing2.txt,encrypt2.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
-    rm -rf /home/$(whoami)/.nothing2
-  fi
-  if [[ "$ANSWERFILE_path_full" ]]; then
-    mkdir /home/$(whoami)/.nothing3
-    date | sha512sum > /home/$(whoami)/.nothing3/nothing3.txt
-    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_full" -out /home/$(whoami)/.nothing3/encrypt3.txt -pass file:/home/$(whoami)/.nothing3/nothing3.txt
-    sudo cp /home/$(whoami)/.nothing3/{nothing3.txt,encrypt3.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
-    rm -rf /home/$(whoami)/.nothing3
-  fi
-  sudo touch /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf
-  cat << EOF | sudo tee -a /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf > /dev/null
-[device]
-wifi.backend=iwd
-EOF
-  sudo cp configs/{pacman1.conf,pacman2.conf} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/
-  sudo cp scripts/repositories.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/
-  sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
-  artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/ /bin/bash -c "bash /repositories.sh"
-  sudo rm -rf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
-  if [[ "$(pacman -Qs rtl8812au-dkms-git)" ]]; then
-    sudo cp packages/rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs
-    artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs /bin/bash -c "pacman --noconfirm -U rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst"
-    sudo rm -rf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst
-  fi		
+    #----------------------------------------------------------------------------------------------------------------------------------
 
-#----------------------------------------------------------------------------------------------------------------------------------
+    # init-system
 
-# Continues building the ISO with auto-cleanup
+      INIT_choice="" # "dinit", "openrc" or "runit"
 
-  buildiso -p base -sc
-  buildiso -p base -bc
-  buildiso -p base -zc
-  sudo rm -rf /home/$(whoami)/{BUILDISO,artools-workspace,.config/artools}
-  if [[ "$DELETE_2" == "true" ]]; then
-    sudo pacman --noconfirm -Rns openssl
-  fi
-  if [[ "$DELETE_3" == "true" ]]; then
-    sudo pacman --noconfirm -Rns artools iso-profiles
-  fi
-  if [[ "$DELETE_1" == "true" ]]; then
-    doas pacman --noconfirm -Rns sudo
-  fi
-  if [[ "$RESTORE_1" == "true" ]]; then
-    doas ln -s $(which doas) /usr/bin/sudo
-  fi
-  sudo mv /etc/pacman-backup.conf /etc/pacman.conf
-  sudo pacman -Syy
-  echo
-  echo "----------------------------------------------------------------"
-  echo "------YOUR CUSTOM ISO CAN BE FOUND AT /home/$(whoami)/ISO/base------"
-  echo "----------------------------------------------------------------"
-  echo 
+    #----------------------------------------------------------------------------------------------------------------------------------
 
+    # replace packages
+
+    # ------ TRUE FOR ALL MENTIONED PACKAGES BELOW: ------ 
+     
+      # These replacements doesn't conflict with their counterparts, which means
+      # that any packages that depends on one of the below mentioned counterparts
+      # will install that counterpart. pacman -Rdd COUNTERPART can be used,
+      # but may results in some programs failing
+
+      REPLACE_networkmanager="" # Replaces it with connman; "true" or "false"
+      REPLACE_sudo="" # Replaces it with doas; "true" or "false"
+      REPLACE_elogind="" # Replaces it with seatd; "true" or "false
+                         # NOTICE: an elogind-dummy-package is installed, though NetworkManager requires elogind
+    #----------------------------------------------------------------------------------------------------------------------------------
+
+    # locals
+
+      TIMEZONE="NOT SPECIFIED" # e.g. "Europe/Copenhagen"
+      LANGUAGES_generate="NOT SPECIFIED" # Must be space-separated; e.g. "da_DK.UTF-8 en_GB.UTF-8"
+      LANGUAGE_system="NOT SPECIFIED"
+      KEYMAP_system="NOT SPECIFIED"
+      HOSTNAME_system="NOT SPECIFIED"
+
+    #----------------------------------------------------------------------------------------------------------------------------------
+
+    # users
+
+      ROOT_passwd="NOT SPECIFIED" 
+      USERNAME="NOT SPECIFIED"
+      USER_passwd="NOT SPECIFIED"
+
+    #----------------------------------------------------------------------------------------------------------------------------------
+
+    # miscellaneous
+
+      BOOTLOADER_label="NOT SPECIFIED"
+      PACKAGES_additional="NONE" # Must be space-separated; e.g. "firefox kicad"
+                                 # Keep "NONE" as value, if no other packages should be installed
+      POST_script="" # "true": fetches and execute specified script as regular user from an git-repository
+                     # "false": does nothing
+
+    # ------ ONLY MODIFY BELOW IF POST_script IS "true" ------ 
+
+      POST_install_script="" # e.g. "gitlab.com/FabseGP02/artix-install-script.git"
+      POST_install_script_name="" # Path to script to be executed within the cloned repository
+                                  # e.g. "config/install_artix.sh" if within artix-install-script/config
+
+    #----------------------------------------------------------------------------------------------------------------------------------
