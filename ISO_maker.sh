@@ -128,6 +128,11 @@ EOF
   sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
   artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/ /bin/bash -c "bash /repositories.sh"
   sudo rm -rf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
+  if [[ "$(pacman -Qs rtl8812au-dkms-git)" ]]; then
+    sudo cp packages/rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs
+    artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs /bin/bash -c "pacman --noconfirm -U rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst"
+    sudo rm -rf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst
+  fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -156,4 +161,3 @@ EOF
   echo "------YOUR CUSTOM ISO CAN BE FOUND AT /home/$(whoami)/ISO/base------"
   echo "----------------------------------------------------------------"
   echo 
-
