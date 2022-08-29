@@ -11,7 +11,8 @@
 
 # Updating pacman-config + backup of existing
 
-  if [[ "$(pacman -Qs opendoas)" ]]; then
+  check_sudo="$(pacman -Qs --color always "sudo" | grep "local" | grep "sudo ")"
+  if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "${check_sudo}" ]]; then
     su_command="doas"
   else
     su_command="sudo"
@@ -34,7 +35,6 @@
     KEYMAP="$(</etc/vconsole.conf)" # Defaults to local keymap
     KEYMAP_sorted=${KEYMAP#*=}
   fi
-  check_sudo="$(pacman -Qs --color always "sudo" | grep "local" | grep "sudo ")"
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
