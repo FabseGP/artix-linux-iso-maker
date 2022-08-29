@@ -57,6 +57,12 @@
     sudo pacman --noconfirm -S artools iso-profiles
     DELETE_3="true"
   fi
+    fi
+  if [[ "$(pacman -Qs snap-pac)" ]]; then
+    sudo mv /etc/pacman.d/hooks/*-snap-* /etc
+    sudo mv /usr/share/libalpm/hooks/*-snap-* /usr
+    RESTORE_2="true"
+  fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -153,6 +159,10 @@ EOF
   fi
   if [[ "$RESTORE_1" == "true" ]]; then
     doas ln -s $(which doas) /usr/bin/sudo
+  fi
+  if [[ "$RESTORE_2" == "true" ]]; then
+    sudo mv /etc/*-snap-* /etc/pacman.d/hooks/
+    sudo mv /usr/*-snap-* /usr/share/libalpm/hooks fi
   fi
   sudo mv /etc/pacman-backup.conf /etc/pacman.conf
   sudo pacman -Syy
