@@ -153,18 +153,18 @@ EOF
   if [[ "$DELETE_3" == "true" ]]; then
     sudo pacman --noconfirm -Rns artools iso-profiles
   fi
-  if [[ "$DELETE_1" == "true" ]]; then
-    doas pacman --noconfirm -Rns sudo
-  fi
-  if [[ "$RESTORE_1" == "true" ]]; then
-    doas ln -s $(which doas) /usr/bin/sudo
-  fi
   if [[ "$RESTORE_2" == "true" ]]; then
     sudo mv /etc/{*-snap-*,*_snap-*} /etc/pacman.d/hooks/
     sudo mv /usr/{*-snap-*,*_snap-*} /usr/share/libalpm/hooks
   fi
   sudo mv /etc/pacman-backup.conf /etc/pacman.conf
   sudo pacman -Syy
+  if [[ "$DELETE_1" == "true" ]]; then
+    doas pacman --noconfirm -Rns sudo
+  fi
+  if [[ "$RESTORE_1" == "true" ]]; then
+    doas ln -s $(which doas) /usr/bin/sudo
+  fi
   echo
   echo "----------------------------------------------------------------"
   echo "------YOUR CUSTOM ISO CAN BE FOUND AT /home/$(whoami)/ISO/base------"
