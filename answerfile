@@ -14,7 +14,6 @@
 
   DRIVE_path="" # Absolute path; e.g. "/dev/nvme0n1" or "/dev/sda"
                 # Or "ASK" if wanted to be prompted before install
-  HOME_partition="" # "true" or "false"
   FILESYSTEM_primary_btrfs="true" 
   FILESYSTEM_primary_bcachefs="" # NOT YET IN KERNEL; LEAVE EMPTY
   ENCRYPTION_partitions="" # "true" or "false"
@@ -29,6 +28,17 @@
 
   BOOT_size="300" # In megabytes; minimum 300 MB is required
   BOOT_label="UNSPECIFIED" # Maximum 11 characters with FAT32
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+# home-partition
+
+  HOME_partition="" # "true" or "false"
+
+# ------ ONLY MODIFY BELOW IF HOME_partition IS "true" ------ 
+
+  HOME_size="300" # In megabytes; the rest is filled by /
+  HOME_label="UNSPECIFIED"
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
