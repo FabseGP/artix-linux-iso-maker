@@ -104,6 +104,7 @@
                              # Keep "NONE" as value, if no other packages should be installed
   POST_script="" # "true": fetches and execute specified script as regular user from an git-repository
                  # "false": does nothing
+  CHAOTIC_aur="" # "true" or "false"; "true" will add CHAOTIC AUR repos
 
 # ------ ONLY MODIFY BELOW IF POST_script IS "true" ------ 
 
