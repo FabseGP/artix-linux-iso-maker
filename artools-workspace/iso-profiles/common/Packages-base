@@ -15,9 +15,9 @@ efibootmgr
 elogind-@initsys@
 grub
 iptables-nft
-linux-tkg-cfs
+linux-zen
 linux-firmware
-linux-tkg-cfs-headers
+linux-zen-headers
 lsb-release
 memtest86+
 mkinitcpio
