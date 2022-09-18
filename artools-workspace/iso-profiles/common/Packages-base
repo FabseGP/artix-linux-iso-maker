@@ -7,7 +7,6 @@ artix-grub-theme
 acpi
 acpid-@initsys@
 bc
-bcachefs-tools
 btrfs-progs
 cryptsetup-@initsys@
 dosfstools
