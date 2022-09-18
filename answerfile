@@ -37,7 +37,7 @@
 
 # ------ ONLY MODIFY BELOW IF HOME_partition IS "true" ------ 
 
-  HOME_size="300" # In megabytes; the rest is filled by /
+  HOME_size="200" # In gigabytes; the rest is filled by /
   HOME_label="UNSPECIFIED"
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@
 
 # ------ ONLY MODIFY BELOW IF SWAP_partition IS "true" ------ 
 
-  SWAP_size_percentage="20" # Written in percentage of RAM, e.g. 2GB out of 8GB RAM = 25
+  SWAP_size_percentage="20" # Written in percentage of RAM, e.g. 2GB out of 8GB RAM = 25, though maximum 50
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
