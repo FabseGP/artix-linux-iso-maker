@@ -1,5 +1,11 @@
 #!/usr/bin/bash
 
+# Static parameters
+
+  BEGINNER_DIR=$(pwd)
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
 # Configurable parameters
 
   KEYMAP="" # Only relevant if /etc/vconsole.conf doesn't exist
@@ -17,15 +23,16 @@
   else
     su_command="sudo"
   fi
-  "$su_command" cp /etc/pacman.conf /etc/pacman-backup.conf
+  "$su_command" cp /etc/pacman.conf $BEGINNER_DIR/pacman.conf
   if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then
     "$su_command" cp -rf configs/pacman1.conf /etc/pacman.conf
-    "$su_command" pacman -Syy
-    "$su_command" pacman -S --noconfirm artix-archlinux-support
+    "$su_command" pacman -Syy --noconfirm artix-archlinux-support
     "$su_command" pacman-key --populate archlinux
   fi
+  "$su_command" pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
+  "$su_command" pacman-key --lsign-key FBA220DFC880C036
+  "$su_command" pacman --noconfirm -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
   "$su_command" cp -rf configs/pacman2.conf /etc/pacman.conf
-  "$su_command" pacman -Syy
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
