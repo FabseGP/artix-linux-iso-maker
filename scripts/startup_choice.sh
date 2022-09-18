@@ -2,7 +2,7 @@
 
 cd /scripts || exit
 PS3='Choose your mode: '
-modes=("INTERACTIVE INSTALL" "BASE INSTALL" "MINIMAL INSTALL" "FULL INSTALL" "EXIT TO LIVE ISO")
+modes=("INTERACTIVE INSTALL" "BASE INSTALL" "MINIMAL INSTALL" "FULL INSTALL" "WGET ANSWERFILE" "EXIT TO LIVE ISO")
 select option in "${modes[@]}"; do
     case $option in
         "INTERACTIVE INSTALL")
@@ -17,17 +17,21 @@ select option in "${modes[@]}"; do
             ./startup_with_answerfile.sh MINIMAL
             break
             ;;
-	    "FULL INSTALL")
+	 "FULL INSTALL")
             ./startup_with_answerfile.sh FULL
             break
-	        ;;
-	     "EXIT TO LIVE ISO")
+	    ;;
+	 "WGET ANSWERFILE")
+            ./startup_wget_answerfile.sh
+            break
+	    ;;
+	 "EXIT TO LIVE ISO")
             chmod u+x keymap.sh
             ./keymap.sh
             cd
-	        echo "User requested exit"
-	        break
-	        ;;
+	    echo "User requested exit"
+	    break
+	    ;;
          *) echo "Invalid option \"$REPLY\"; I don't have time for this!";;
     esac
 done

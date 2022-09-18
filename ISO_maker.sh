@@ -105,7 +105,7 @@
   sudo cp scripts/startup_choice.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup_choice.sh
   sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup_choice.sh
   sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/{scripts,.nothing,.encrypt,.decrypt}
-  sudo cp scripts/{startup.sh,startup_with_answerfile.sh,keymap.sh} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
+  sudo cp scripts/{startup.sh,startup_with_answerfile.sh,startup_wget_answerfile.sh,keymap.sh} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
   sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts/*
   sudo sed -i "3s/^/  KEYMAP=$KEYMAP_sorted\n/" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts/keymap.sh
   if [[ "$ANSWERFILE_path_base" ]]; then
