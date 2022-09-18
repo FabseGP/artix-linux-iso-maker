@@ -23,16 +23,15 @@
   else
     su_command="sudo"
   fi
-  "$su_command" cp /etc/pacman.conf $BEGINNER_DIR/pacman.conf
   if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then
-    "$su_command" cp -rf configs/pacman1.conf /etc/pacman.conf
     "$su_command" pacman -Syy --noconfirm artix-archlinux-support
     "$su_command" pacman-key --populate archlinux
   fi
-  "$su_command" pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
-  "$su_command" pacman-key --lsign-key FBA220DFC880C036
-  "$su_command" pacman --noconfirm -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-  "$su_command" cp -rf configs/pacman2.conf /etc/pacman.conf
+  if [[ -z "$(pacman -Qs chaotic-keyring)" ]]; then
+    "$su_command" pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
+    "$su_command" pacman-key --lsign-key FBA220DFC880C036
+    "$su_command" pacman --noconfirm -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+  fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -53,7 +52,7 @@
       RESTORE_1="true"
     fi
     doas pacman --noconfirm -S sudo
-    echo "%wheel ALL=(ALL) ALL" | doas tee /etc/sudoers
+    echo ""$USER" ALL=(ALL:ALL) NOPASSWD: ALL" | doas tee -a /etc/sudoers > /dev/null
     DELETE_1="true"
   fi
   if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" ]]; then
@@ -164,8 +163,6 @@ EOF
     sudo mv /etc/{*-snap-*,*_snap-*} /etc/pacman.d/hooks/
     sudo mv /usr/{*-snap-*,*_snap-*} /usr/share/libalpm/hooks
   fi
-  sudo mv /etc/pacman-backup.conf /etc/pacman.conf
-  sudo pacman -Syy
   if [[ "$DELETE_1" == "true" ]]; then
     doas pacman --noconfirm -Rns sudo
   fi
