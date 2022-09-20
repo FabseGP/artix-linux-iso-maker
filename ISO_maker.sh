@@ -27,7 +27,10 @@
     cd packages || exit
     ALPH_mirrorlist="$(ls -- *alhp-mirrorlist-*)"
     ALPH_keyring="$(ls -- *alhp-keyring-*)"
-    pacman -U --noconfirm $ALPH_mirrorlist $ALPH_keyring
+    "$su_command" pacman -U --noconfirm $ALPH_mirrorlist $ALPH_keyring
+    cd $BEGINNER_DIR
+    "$su_command" cp configs/alhp-mirrorlist /etc/pacman.d/alhp-mirrorlist
+    "$su_command" chmod 644 /etc/pacman.d/alhp-mirrorlist
   fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
