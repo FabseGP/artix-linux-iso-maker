@@ -23,9 +23,11 @@
   else
     su_command="sudo"
   fi
-  if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then
-    "$su_command" pacman -Syy --noconfirm artix-archlinux-support
-    "$su_command" pacman-key --populate archlinux
+  if [[ -z "$(pacman -Qs alhp-mirrorlist)" ]]; then
+    cd packages || exit
+    ALPH_mirrorlist="$(ls -- *alhp-mirrorlist-*)"
+    ALPH_keyring="$(ls -- *alhp-keyring-*)"
+    pacman -U --noconfirm $ALPH_mirrorlist $ALPH_keyring
   fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -134,6 +136,9 @@ EOF
   sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
   artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/ /bin/bash -c "bash /repositories.sh"
   sudo rm -rf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
+  sudo cp packages/{alhp-keyring-20220522-1-any.pkg.tar.zst,alhp-mirrorlist-20220625-1-any.pkg.tar.zst} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs
+  artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs /bin/bash -c "pacman --noconfirm -U alhp-keyring-20220522-1-any.pkg.tar.zst alhp-mirrorlist-20220625-1-any.pkg.tar.zst"
+  sudo rm -rf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/{alhp-keyring-20220522-1-any.pkg.tar.zst,alhp-mirrorlist-20220625-1-any.pkg.tar.zst}
   if [[ "$(pacman -Qs rtl8812au-dkms-git)" ]]; then
     sudo cp packages/rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs
     artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs /bin/bash -c "pacman --noconfirm -U rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst"
