@@ -23,15 +23,11 @@
   else
     su_command="sudo"
   fi
-  if [[ -z "$(pacman -Qs alhp-mirrorlist)" ]]; then
-    cd packages || exit
-    ALPH_mirrorlist="$(ls -- *alhp-mirrorlist-*)"
-    ALPH_keyring="$(ls -- *alhp-keyring-*)"
-    "$su_command" pacman -U --noconfirm $ALPH_mirrorlist $ALPH_keyring
-    cd $BEGINNER_DIR
-    "$su_command" cp configs/alhp-mirrorlist /etc/pacman.d/alhp-mirrorlist
-    "$su_command" chmod 644 /etc/pacman.d/alhp-mirrorlist
+  if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then
+       "$su_command" pacman -Syy --noconfirm artix-archlinux-support
+           "$su_command" pacman-key --populate archlinux
   fi
+
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
