@@ -1,21 +1,18 @@
 #!/usr/bin/bash
 
+  index=1
+  cd /scripts || exit
   TYPE="$1"  
-
-  if [[ "$TYPE" == "BASE" ]]; then
-    openssl enc -aes-256-cbc -md sha512 -a -d -pbkdf2 -iter 100000 -in encrypt1.txt -out tmp.txt -pass file:nothing1.txt
-    date | sha512sum > /.nothing/nothing.txt
-    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in tmp.txt -out /.encrypt/answer_encrypt.txt -pass file:/.nothing/nothing.txt
-  elif [[ "$TYPE" == "MINIMAL" ]]; then
-    openssl enc -aes-256-cbc -md sha512 -a -d -pbkdf2 -iter 100000 -in encrypt2.txt -out tmp.txt -pass file:nothing2.txt
-    date | sha512sum > /.nothing/nothing.txt
-    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in tmp.txt -out /.encrypt/answer_encrypt.txt -pass file:/.nothing/nothing.txt
-  elif [[ "$TYPE" == "FULL" ]]; then
-    openssl enc -aes-256-cbc -md sha512 -a -d -pbkdf2 -iter 100000 -in encrypt3.txt -out tmp.txt -pass file:nothing3.txt
-    date | sha512sum > /.nothing/nothing.txt
-    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in tmp.txt -out /.encrypt/answer_encrypt.txt -pass file:/.nothing/nothing.txt
-  fi
-  chmod u+x keymap.sh
+  for type in BASE MINIMAL FULL; do
+    if [[ "$type" == "$TYPE" ]]; then
+      openssl enc -aes-256-cbc -md sha512 -a -d -pbkdf2 -iter 100000 -in encrypt$index.txt -out tmp.txt -pass file:nothing$index.txt
+      date | sha512sum > /.nothing/nothing.txt
+      openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in tmp.txt -out /.encrypt/answer_encrypt.txt -pass file:/.nothing/nothing.txt
+      (( index++ )) || true
+    else
+      (( index++ )) || true
+    fi
+  done
   ./keymap.sh
   cd || exit
   until ping -c 1 xkcd.com &> /dev/null; do
@@ -24,8 +21,7 @@
   pacman-key --init
   pacman-key --populate artix archlinux
   pacman -Scc --noconfirm
-  pacman -Syy  
+  pacman -Sy  
   git clone https://gitlab.com/FabseGP02/artix-install-script.git
   cd artix-install-script || exit
-  chmod u+x install_artix.sh
   ./install_artix.sh

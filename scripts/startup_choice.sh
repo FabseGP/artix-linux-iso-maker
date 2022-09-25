@@ -26,9 +26,8 @@ select option in "${modes[@]}"; do
             break
 	    ;;
 	 "EXIT TO LIVE ISO")
-            chmod u+x keymap.sh
             ./keymap.sh
-            cd
+            cd || exit
 	    echo "User requested exit"
 	    break
 	    ;;
