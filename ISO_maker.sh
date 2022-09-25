@@ -3,6 +3,7 @@
 # Static parameters
 
   BEGINNER_DIR=$(pwd)
+  index=1
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -24,8 +25,8 @@
     su_command="sudo"
   fi
   if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then
-       "$su_command" pacman -Syy --noconfirm artix-archlinux-support
-           "$su_command" pacman-key --populate archlinux
+    "$su_command" pacman -Syy --noconfirm artix-archlinux-support
+    "$su_command" pacman-key --populate archlinux
   fi
 
 
@@ -45,24 +46,18 @@
   if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "${check_sudo}" ]]; then
     if [[ -f "/usr/bin/sudo" ]]; then
       doas rm -rf /usr/bin/sudo
-      RESTORE_1="true"
+      RESTORE_sudo="true"
     fi
     doas pacman --noconfirm -S sudo
     echo ""$USER" ALL=(ALL:ALL) NOPASSWD: ALL" | doas tee -a /etc/sudoers > /dev/null
-    DELETE_1="true"
+    DELETE_sudo="true"
   fi
   if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" ]]; then
     sudo pacman --noconfirm -S openssl
-    DELETE_2="true"
+    DELETE_openssl="true"
   fi
   if [[ -z "$(pacman -Qs artools)" ]]; then
     sudo pacman --noconfirm -S artools iso-profiles
-    DELETE_3="true"
-  fi
-  if [[ "$(pacman -Qs snap-pac)" ]]; then
-    sudo mv /etc/pacman.d/hooks/{*-snap-*,*_snap-*} /etc
-    sudo mv /usr/share/libalpm/hooks/{*-snap-*,*_snap-*} /usr
-    RESTORE_2="true"
   fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -99,40 +94,24 @@
   buildiso -p base -x
   sudo sed -i 's/--noclear/--autologin root --noclear/' /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/dinit.d/tty1
   sudo cp scripts/startup_choice.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup_choice.sh
-  sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup_choice.sh
   sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/{scripts,.nothing,.encrypt,.decrypt}
   sudo cp scripts/{startup.sh,startup_with_answerfile.sh,startup_wget_answerfile.sh,keymap.sh} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
-  sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts/*
   sudo sed -i "3s/^/  KEYMAP=$KEYMAP_sorted\n/" /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts/keymap.sh
-  if [[ "$ANSWERFILE_path_base" ]]; then
-    mkdir /home/$(whoami)/.nothing1
-    date | sha512sum > /home/$(whoami)/.nothing1/nothing1.txt
-    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_base" -out /home/$(whoami)/.nothing1/encrypt1.txt -pass file:/home/$(whoami)/.nothing1/nothing1.txt
-    sudo cp /home/$(whoami)/.nothing1/{nothing1.txt,encrypt1.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
-    rm -rf /home/$(whoami)/.nothing1
-  fi
-  if [[ "$ANSWERFILE_path_minimal" ]]; then
-    mkdir /home/$(whoami)/.nothing2
-    date | sha512sum > /home/$(whoami)/.nothing2/nothing2.txt
-    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_minimal" -out /home/$(whoami)/.nothing2/encrypt2.txt -pass file:/home/$(whoami)/.nothing2/nothing2.txt
-    sudo cp /home/$(whoami)/.nothing2/{nothing2.txt,encrypt2.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
-    rm -rf /home/$(whoami)/.nothing2
-  fi
-  if [[ "$ANSWERFILE_path_full" ]]; then
-    mkdir /home/$(whoami)/.nothing3
-    date | sha512sum > /home/$(whoami)/.nothing3/nothing3.txt
-    openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_full" -out /home/$(whoami)/.nothing3/encrypt3.txt -pass file:/home/$(whoami)/.nothing3/nothing3.txt
-    sudo cp /home/$(whoami)/.nothing3/{nothing3.txt,encrypt3.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
-    rm -rf /home/$(whoami)/.nothing3
-  fi
-  sudo touch /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf
-  cat << EOF | sudo tee -a /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf > /dev/null
-[device]
-wifi.backend=iwd
-EOF
-  sudo cp configs/{pacman1.conf,pacman2.conf} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/
+  for answerfile in $ANSWERFILE_path_base $ANSWERFILE_path_minimal $ANSWERFILE_path_full; do
+    if [[ "$answerfile" ]]; then
+      mkdir /home/$(whoami)/.nothing$index
+      date | sha512sum > /home/$(whoami)/.nothing$index/nothing$index.txt
+      openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_base" -out /home/$(whoami)/.nothing$index/encrypt$index.txt -pass file:/home/$(whoami)/.nothing$index/nothing$index.txt
+      sudo cp /home/$(whoami)/.nothing$index/{nothing$index.txt,encrypt$index.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
+      rm -rf /home/$(whoami)/.nothing$index
+      (( index++ )) || true
+    else
+      (( index++ )) || true
+    fi
+  done
+  sudo cp configs/wifi_backend.conf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/NetworkManager/conf.d/wifi_backend.conf
+  sudo cp configs/{pacman_with_arch.conf,pacman_without_arch.conf} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/
   sudo cp scripts/repositories.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/
-  sudo chmod u+x /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
   artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/ /bin/bash -c "bash /repositories.sh"
   sudo rm -rf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
   if [[ "$(pacman -Qs rtl8812au-dkms-git)" ]]; then
@@ -148,21 +127,14 @@ EOF
   buildiso -p base -sc
   buildiso -p base -bc
   buildiso -p base -zc
-  sudo rm -rf /home/$(whoami)/{BUILDISO,artools-workspace,.config/artools}
-  if [[ "$DELETE_2" == "true" ]]; then
+  sudo rm -rf /home/$(whoami)/BUILDISO
+  if [[ "$DELETE_openssl" == "true" ]]; then
     sudo pacman --noconfirm -Rns openssl
   fi
-  if [[ "$DELETE_3" == "true" ]]; then
-    sudo pacman --noconfirm -Rns artools iso-profiles
-  fi
-  if [[ "$RESTORE_2" == "true" ]]; then
-    sudo mv /etc/{*-snap-*,*_snap-*} /etc/pacman.d/hooks/
-    sudo mv /usr/{*-snap-*,*_snap-*} /usr/share/libalpm/hooks
-  fi
-  if [[ "$DELETE_1" == "true" ]]; then
+  if [[ "$DELETE_sudo" == "true" ]]; then
     doas pacman --noconfirm -Rns sudo
   fi
-  if [[ "$RESTORE_1" == "true" ]]; then
+  if [[ "$RESTORE_sudo" == "true" ]]; then
     doas ln -s $(which doas) /usr/bin/sudo
   fi
   echo

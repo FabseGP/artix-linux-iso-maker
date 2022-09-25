@@ -10,7 +10,6 @@ Any missing dependencies will be installed automatically, though the path to the
 ```bash
 git clone https://gitlab.com/FabseGP02/artix-linux-iso-maker.git
 cd artix-linux-iso-maker
-chmod u+x ISO_maker.sh
 ./ISO_maker.sh # Remember to replace the answerfile, if an automatic install is desired
 ````
 
