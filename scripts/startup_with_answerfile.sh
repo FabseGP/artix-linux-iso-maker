@@ -9,19 +9,10 @@
       date | sha512sum > /.nothing/nothing.txt
       openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in tmp.txt -out /.encrypt/answer_encrypt.txt -pass file:/.nothing/nothing.txt
       (( index++ )) || true
-    else
-      (( index++ )) || true
-    fi
+    else (( index++ )) || true; fi
   done
   ./keymap.sh
   cd || exit
-  until ping -c 1 xkcd.com &> /dev/null; do
-    nmtui
-  done
-  pacman-key --init
-  pacman-key --populate artix archlinux
-  pacman -Scc --noconfirm
-  pacman -Sy  
-  git clone https://gitlab.com/FabseGP02/artix-install-script.git
-  cd artix-install-script || exit
-  ./install_artix.sh
+  until ping -c 1 xkcd.com &> /dev/null; do nmtui; done
+  pacman-key --init && pacman-key --populate artix archlinux && pacman -Scc --noconfirm && pacman -Sy  
+  git clone https://gitlab.com/FabseGP02/artix-install-script.git && cd artix-install-script || exit && ./install_artix.sh
