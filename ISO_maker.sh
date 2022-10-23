@@ -4,6 +4,9 @@
 
   BEGINNER_DIR=$(pwd)
   index=1
+  today=$(date +"%Y_%m_%d-%T")
+  shopt -s nullglob
+  ISO_path=$(echo /home/$(whoami)/ISO/base/*.iso)
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -43,7 +46,7 @@
 
 # Cleaning conflicting folders
 
-  if [[ -d "/home/$(whoami)/ISO" ]]; then rm -rf /${home/$(whoami)/ISO:?}; fi
+  if [[ "$ISO_path" ]]; then mv -f /home/$(whoami)/ISO/base /home/$(whoami)/ISO/base-"$today"; fi
   if [[ -d "/home/$(whoami)/BUILDISO" ]]; then
     if [[ -d "/home/$(whoami)/BUILDISO/buildiso/base/artix/bootfs" ]]; then sudo umount -l /home/$(whoami)/BUILDISO/buildiso/base/artix/bootfs; fi
     if [[ -d "/home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs" ]]; then sudo umount -l /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs; fi
