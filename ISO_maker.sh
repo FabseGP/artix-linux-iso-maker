@@ -23,7 +23,7 @@
 
   if [[ "$(pacman -Qs opendoas)" ]] && ! [[ "$(pacman -Qs --color always "sudo" | grep "local" | grep "sudo ")" == "" ]]; then COMMAND="doas"; 
   else SU_COMMAND="sudo"; fi
-  if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then "$SU_COMMAND" pacman -Syy --noconfirm artix-archlinux-support; "$SU_COMMAND" pacman-key --populate archlinux; fi
+  if [[ -z "$(pacman -Qs artix-archlinux-support)" ]]; then "$SU_COMMAND" pacman -Syy --noconfirm --needed artix-archlinux-support; "$SU_COMMAND" pacman-key --populate archlinux; fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -37,10 +37,10 @@
 
   if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "${check_sudo}" ]]; then
     if [[ -f "/usr/bin/sudo" ]]; then doas rm -rf /usr/bin/sudo; RESTORE_sudo="true"; fi
-    doas pacman --noconfirm -S sudo && echo ""$USER" ALL=(ALL:ALL) NOPASSWD: ALL" | doas tee -a /etc/sudoers > /dev/null && DELETE_sudo="true"
+    doas pacman --noconfirm --needed -S sudo && echo ""$USER" ALL=(ALL:ALL) NOPASSWD: ALL" | doas tee -a /etc/sudoers > /dev/null && DELETE_sudo="true"
   fi
-  if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" ]]; then sudo pacman --noconfirm -S openssl; DELETE_openssl="true"; fi
-  if [[ -z "$(pacman -Qs artools)" ]]; then sudo pacman --noconfirm -S artools iso-profiles; fi
+  if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" ]]; then sudo pacman --noconfirm --needed -S openssl; DELETE_openssl="true"; fi
+  if [[ -z "$(pacman -Qs artools)" ]]; then sudo pacman --noconfirm --needed -S artools iso-profiles; fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -85,11 +85,6 @@
   sudo cp scripts/repositories.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/
   artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/ /bin/bash -c "bash /repositories.sh"
   sudo rm -rf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/repositories.sh
-  if [[ "$(pacman -Qs rtl8812au-dkms-git)" ]]; then
-    sudo cp packages/rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs
-    artix-chroot /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs /bin/bash -c "pacman --noconfirm -U rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst"
-    sudo rm -rf /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/rtl8812au-dkms-git-5.13.6.r128.g7aa0e0c-1-x86_64.pkg.tar.zst
-  fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
