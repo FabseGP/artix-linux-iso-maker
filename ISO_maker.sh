@@ -41,7 +41,7 @@
     echo ""$USER" ALL=(ALL:ALL) NOPASSWD: ALL" | doas tee -a /etc/sudoers > /dev/null 
     DELETE_sudo="true"
   fi
-  if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" ]]; then sudo pacman --noconfirm --needed -S openssl; DELETE_openssl="true"; fi
+  if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" || "$ANSWERFILE_path_base" ]]; then sudo pacman --noconfirm --needed -S openssl; DELETE_openssl="true"; fi
   if [[ -z "$(pacman -Qs artools)" ]]; then sudo pacman --noconfirm --needed -S artools iso-profiles; fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
