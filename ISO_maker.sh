@@ -13,9 +13,9 @@
 # Configurable parameters
 
   KEYMAP="" # Only relevant if /etc/vconsole.conf doesn't exist
-  ANSWERFILE_path_base="/home/fabse/Diverse/answerfile_base" # e.g. /home/USERNAME/answerfile_base; must be named answerfile_base
-  ANSWERFILE_path_minimal="/home/fabse/Diverse/answerfile_minimal" # e.g. /home/USERNAME/answerfile_minimal; must be named answerfile_minimal
-  ANSWERFILE_path_full="/home/fabse/Diverse/answerfile_full" # e.g. /home/USERNAME/answerfile_full; must be named answerfile_full
+  ANSWERFILE_path_base="" # e.g. /home/USERNAME/answerfile_base; must be named answerfile_base
+  ANSWERFILE_path_minimal="" # e.g. /home/USERNAME/answerfile_minimal; must be named answerfile_minimal
+  ANSWERFILE_path_full="" # e.g. /home/USERNAME/answerfile_full; must be named answerfile_full
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
