@@ -37,7 +37,9 @@
 
   if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "${check_sudo}" ]]; then
     if [[ -f "/usr/bin/sudo" ]]; then doas rm -rf /usr/bin/sudo; RESTORE_sudo="true"; fi
-    doas pacman --noconfirm -S sudo && echo ""$USER" ALL=(ALL:ALL) NOPASSWD: ALL" | doas tee -a /etc/sudoers > /dev/null && DELETE_sudo="true"
+    doas pacman --noconfirm -S sudo 
+    echo ""$USER" ALL=(ALL:ALL) NOPASSWD: ALL" | doas tee -a /etc/sudoers > /dev/null 
+    DELETE_sudo="true"
   fi
   if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" ]]; then sudo pacman --noconfirm --needed -S openssl; DELETE_openssl="true"; fi
   if [[ -z "$(pacman -Qs artools)" ]]; then sudo pacman --noconfirm --needed -S artools iso-profiles; fi
@@ -57,14 +59,17 @@
 
 # Copies configs and creates folders
 
-  cp -rf artools /home/$(whoami)/.config && cp -rf artools-workspace /home/$(whoami) && mkdir /home/$(whoami)/{BUILDISO,ISO}
+  cp -rf artools /home/$(whoami)/.config 
+  cp -rf artools-workspace /home/$(whoami) 
+  mkdir /home/$(whoami)/{BUILDISO,ISO}
   sudo sed -i 's/\/usr\/src\/linux\/version/\/usr\/src\/linux-zen\/version/' /usr/bin/buildiso
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
 # Builds the filesystem and applies modifications
 
-  sudo modprobe loop && buildiso -p base -x
+  sudo modprobe loop 
+  buildiso -p base -x
   sudo sed -i 's/--noclear/--autologin root --noclear/' /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/dinit.d/tty1
   sudo cp scripts/startup_choice.sh /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/etc/profile.d/startup_choice.sh
   sudo mkdir /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/{scripts,.nothing,.encrypt,.decrypt}
@@ -90,7 +95,9 @@
 
 # Continues building the ISO with auto-cleanup
 
-  buildiso -p base -sc && buildiso -p base -bc && buildiso -p base -zc
+  buildiso -p base -sc 
+  buildiso -p base -bc 
+  buildiso -p base -zc
   sudo rm -rf /home/$(whoami)/BUILDISO
   if [[ "$DELETE_openssl" == "true" ]]; then sudo pacman --noconfirm -Rns openssl; fi
   if [[ "$DELETE_sudo" == "true" ]]; then doas pacman --noconfirm -Rns sudo; fi
