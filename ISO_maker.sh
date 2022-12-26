@@ -13,9 +13,9 @@
 # Configurable parameters
 
   KEYMAP="" # Only relevant if /etc/vconsole.conf doesn't exist
-  ANSWERFILE_path_base="" # e.g. /home/USERNAME/answerfile_base; must be named answerfile_base
-  ANSWERFILE_path_minimal="" # e.g. /home/USERNAME/answerfile_minimal; must be named answerfile_minimal
-  ANSWERFILE_path_full="" # e.g. /home/USERNAME/answerfile_full; must be named answerfile_full
+  ANSWERFILE_path_base="/home/fabse/Diverse/answerfile_base" # e.g. /home/USERNAME/answerfile_base; must be named answerfile_base
+  ANSWERFILE_path_minimal="/home/fabse/Diverse/answerfile_minimal" # e.g. /home/USERNAME/answerfile_minimal; must be named answerfile_minimal
+  ANSWERFILE_path_full="/home/fabse/Diverse/answerfile_full" # e.g. /home/USERNAME/answerfile_full; must be named answerfile_full
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@
 
   if [[ "$(pacman -Qs opendoas)" ]] && [[ -z "${check_sudo}" ]]; then
     if [[ -f "/usr/bin/sudo" ]]; then doas rm -rf /usr/bin/sudo; RESTORE_sudo="true"; fi
-    doas pacman --noconfirm --needed -S sudo && echo ""$USER" ALL=(ALL:ALL) NOPASSWD: ALL" | doas tee -a /etc/sudoers > /dev/null && DELETE_sudo="true"
+    doas pacman --noconfirm -S sudo && echo ""$USER" ALL=(ALL:ALL) NOPASSWD: ALL" | doas tee -a /etc/sudoers > /dev/null && DELETE_sudo="true"
   fi
   if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" ]]; then sudo pacman --noconfirm --needed -S openssl; DELETE_openssl="true"; fi
   if [[ -z "$(pacman -Qs artools)" ]]; then sudo pacman --noconfirm --needed -S artools iso-profiles; fi
@@ -50,7 +50,7 @@
   if [[ -d "/home/$(whoami)/BUILDISO" ]]; then
     if [[ -d "/home/$(whoami)/BUILDISO/buildiso/base/artix/bootfs" ]]; then sudo umount -l /home/$(whoami)/BUILDISO/buildiso/base/artix/bootfs; fi
     if [[ -d "/home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs" ]]; then sudo umount -l /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs; fi
-    sudo rm -rf /${home/$(whoami)/BUILDISO:?}
+    sudo rm -rf /home/$(whoami)/BUILDISO
   fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
