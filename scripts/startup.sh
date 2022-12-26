@@ -7,7 +7,7 @@
   pacman-key --init 
   pacman-key --populate artix archlinux 
   pacman -Scc --noconfirm 
-  pacman -Sy    
+  pacman -Syy    
   git clone https://gitlab.com/FabseGP02/artix-install-script.git 
   cd artix-install-script || exit 
   ./install_artix.sh
