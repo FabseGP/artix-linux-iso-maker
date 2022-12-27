@@ -31,7 +31,7 @@
 # Assigning parameters
 
   if [[ "/etc/vconsole.conf" ]] && [[ -z "$KEYMAP" ]]; then KEYMAP="$(</etc/vconsole.conf)"; KEYMAP_sorted=${KEYMAP#*=}; fi
-  if [[ -z "$BUILD_DIR" ]]; then BUILD_DIR="$BUILD_DIR/ARTIX_ISO"; fi
+  if [[ -z "$BUILD_DIR" ]]; then BUILD_DIR="/home/$(whoami)/ARTIX_ISO"; fi
   sed -i 's/CHANGEME/'$BUILD_DIR'\/BUILDISO/' artools/artools-base.conf
   sed -i 's/CHANGEME/'$BUILD_DIR'\/ISO/' artools/artools-iso.conf
 
