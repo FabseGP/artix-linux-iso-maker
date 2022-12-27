@@ -6,8 +6,8 @@
   index=1
   today=$(date +"%Y_%m_%d-%T")
   shopt -s nullglob
-  ISO_path=$(echo ISO/base/*.iso)
-
+  ISO_path=$(echo /home/$(whoami)/ISO/base/*.iso)
+  
 #----------------------------------------------------------------------------------------------------------------------------------
 
 # Configurable parameters
