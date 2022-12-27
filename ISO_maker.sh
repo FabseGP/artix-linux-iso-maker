@@ -51,7 +51,7 @@
   if [[ -d "/home/$(whoami)/BUILDISO" ]]; then
     if [[ -d "/home/$(whoami)/BUILDISO/buildiso/base/artix/bootfs" ]]; then sudo umount -l /home/$(whoami)/BUILDISO/buildiso/base/artix/bootfs; fi
     if [[ -d "/home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs" ]]; then sudo umount -l /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs; fi
-    sudo rm -rf /${home/$(whoami)/BUILDISO:?}
+    sudo rm -rf /home/$(whoami)/BUILDISO
   fi
 
 
@@ -81,7 +81,7 @@
       date | sha512sum > /home/$(whoami)/.nothing$index/nothing$index.txt
       openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -in "$ANSWERFILE_path_base" -out /home/$(whoami)/.nothing$index/encrypt$index.txt -pass file:/home/$(whoami)/.nothing$index/nothing$index.txt
       sudo cp /home/$(whoami)/.nothing$index/{nothing$index.txt,encrypt$index.txt} /home/$(whoami)/BUILDISO/buildiso/base/artix/rootfs/scripts
-      rm -rf /${home/$(whoami)/.nothing$index:?}
+      rm -rf /home/$(whoami)/.nothing$index
       (( index++ )) || true
     else (( index++ )) || true; fi
   done
