@@ -17,20 +17,20 @@ select option in "${modes[@]}"; do
             ./startup_with_answerfile.sh MINIMAL
             break
             ;;
-	 "FULL INSTALL")
+	    "FULL INSTALL")
             ./startup_with_answerfile.sh FULL
             break
-	    ;;
-	 "WGET ANSWERFILE")
+	        ;;
+	    "WGET ANSWERFILE")
             ./startup_wget_answerfile.sh
             break
-	    ;;
-	 "EXIT TO LIVE ISO")
+	        ;;
+	    "EXIT TO LIVE ISO")
             ./keymap.sh 
             cd || exit
 	        echo "User requested exit"
 	        break
-	    ;;
-         *) echo "Invalid option \"$REPLY\"; I don't have time for this!";;
+	        ;;
+        *) echo "Invalid option \"$REPLY\"; I don't have time for this!";;
     esac
 done
