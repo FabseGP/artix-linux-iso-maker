@@ -32,8 +32,8 @@
 
   if [[ "/etc/vconsole.conf" ]] && [[ -z "$KEYMAP" ]]; then KEYMAP="$(</etc/vconsole.conf)"; KEYMAP_sorted=${KEYMAP#*=}; fi
   if [[ -z "$BUILD_DIR" ]]; then BUILD_DIR="/home/$(whoami)/ARTIX_ISO"; fi
-  sed -i 's/CHANGEME/'$BUILD_DIR'\/BUILDISO/' artools/artools-base.conf
-  sed -i 's/CHANGEME/'$BUILD_DIR'\/ISO/' artools/artools-iso.conf
+  sed -i 's,CHANGEME,'$BUILD_DIR'/BUILDISO,' artools/artools-base.conf
+  sed -i 's,CHANGEME,'$BUILD_DIR'/ISO,' artools/artools-iso.conf
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@
     DELETE_sudo="true"
   fi
   if [[ -z "$(pacman -Qs openssl)" ]] && [[ "$ANSWERFILE_path_minimal" || "$ANSWERFILE_path_full" || "$ANSWERFILE_path_base" ]]; then sudo pacman --noconfirm --needed -S openssl; DELETE_openssl="true"; fi
-  if [[ -z "$(pacman -Qs artools)" ]]; then sudo pacman --noconfirm --needed -S artools iso-profiles; fi
+  if [[ -z "$(pacman -Qs iso-profiles)" ]]; then sudo pacman --noconfirm --needed -S artools iso-profiles; fi
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
