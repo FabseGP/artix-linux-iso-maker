@@ -8,3 +8,4 @@
   pacman-key --init
   pacman-key --populate archlinux artix
   mv /pacman_with_arch.conf /etc/pacman.conf
+  pacman -Syy

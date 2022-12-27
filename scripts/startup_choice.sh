@@ -28,8 +28,8 @@ select option in "${modes[@]}"; do
 	 "EXIT TO LIVE ISO")
             ./keymap.sh 
             cd || exit
-	    echo "User requested exit"
-	    break
+	        echo "User requested exit"
+	        break
 	    ;;
          *) echo "Invalid option \"$REPLY\"; I don't have time for this!";;
     esac
