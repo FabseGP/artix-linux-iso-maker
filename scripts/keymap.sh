@@ -1,3 +1,3 @@
 #!/usr/bin/bash
 
-  loadkeys $KEYMAP
+  loadkeys "$KEYMAP"

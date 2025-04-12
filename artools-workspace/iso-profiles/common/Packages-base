@@ -2,8 +2,8 @@
 base
 intel-ucode
 amd-ucode
-artix-grub-theme
 
+artix-grub-theme
 acpi
 acpid-@initsys@
 bc
@@ -31,5 +31,5 @@ iwd-@initsys@
 lolcat
 nano
 parted
-vim
+helix
 wget
